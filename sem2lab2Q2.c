@@ -126,3 +126,16 @@ int main() {
     Display();
     return 0;
 }
+/*OUTPUT
+head=> 0 -> 1 -> 2 -> 3 -> 4 -> [null]
+Enter node data: 5
+
+ head=> 5 -> 0 -> 1 -> 2 -> 3 -> 4 -> [null]
+Enter node data: 6
+
+ head=> 5 -> 0 -> 1 -> 2 -> 3 -> 4 -> 6 -> [null]
+Enter the data: 7
+Enter the position: 1
+
+ head=> 5 -> 7 -> 0 -> 1 -> 2 -> 3 -> 4 -> 6 -> [null]
+*/
