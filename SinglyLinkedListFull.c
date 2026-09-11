@@ -174,7 +174,7 @@ void InsertAtPosition()
     {
             /************************************************************************************/
 
-        if (ptr->next == NULL)
+        if (ptr->next == NULL || ptr == NULL)
         {
             printf("Invalid position! Position is out of bounds!\n\n");
             return;
@@ -185,7 +185,7 @@ void InsertAtPosition()
         ptr = ptr->next;
     }
     
-    prev_ptr->next=NULL;
+    
     temp->next=ptr;
     prev_ptr->next=temp;
 
@@ -314,6 +314,7 @@ void DeleteAtPosition()
 
 void DisplayReverse(struct node *ptr)
 {
+    if (ptr == NULL) return; // හිස් කෝච්චියක් ආවොත් ආපසු හැරෙන්න 🛑
     if (ptr->next != NULL)
     {
         DisplayReverse(ptr->next);
@@ -390,6 +391,7 @@ void Update()
 
 void freeList(struct node *ptr)
 {
+    if (ptr == NULL) return; // හිස් කෝච්චියක් නම් මකන්න දෙයක් නෑ 🛑
     if (ptr->next != NULL)
     {
         freeList(ptr->next);
