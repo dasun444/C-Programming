@@ -4,8 +4,10 @@
 struct node{
     int data;
     struct node *next;
+    struct node *prev;
 };
 struct node *head = NULL;
+struct node *tail = NULL;
 
 void InsertAtBegin();
 void InsertAtEnd();
@@ -14,7 +16,7 @@ void DeleteAtBegin();
 void DeleteAtEnd();
 void DeleteAtPosition();
 void Display();
-void DisplayReverse(struct node *ptr);
+void DisplayReverse();
 void Search();
 void Update();
 void freeList(struct node *ptr);
@@ -82,14 +84,17 @@ void InsertAtBegin()
     scanf("%d", &temp->data);
     
     temp->next = NULL;
+    temp->prev = NULL;/*************/
     
     
     if (head == NULL)
     {
         head = temp;
+        tail = temp;/*************/
     }
     else
     {
+        head->prev = temp;/*************/
         temp->next = head;
         head = temp;
     }
@@ -106,21 +111,19 @@ void InsertAtEnd()
     scanf("%d", &temp->data);
 
     temp->next = NULL;
-
-
+    temp->prev = NULL;/*************/
+    
+    
     if (head == NULL)
     {
         head = temp;
+        tail = temp;/*************/
     }
     else
     {/************************************************************************* */
-        struct node *ptr = head;
-        while(ptr->next != NULL)
-        {
-            ptr = ptr->next;
-        }
-        
-        ptr->next = temp;
+        tail->next=temp;
+        temp->prev=tail;
+        tail=temp;
     }
     printf("Node Added the End!\n\n");
 }
@@ -133,13 +136,16 @@ void InsertAtPosition()
     struct node *temp = (struct node*)malloc(sizeof(struct node));
     printf("Enter data to add: ");
     scanf("%d", &temp->data);
-    temp->next = NULL;
+
+        temp->next = NULL;
+        temp->prev = NULL;/*************/
     
     int pos;
     
     if (head == NULL)
     {
         head = temp;
+        tail = temp;
         return;
     }
     
@@ -147,18 +153,16 @@ void InsertAtPosition()
     else
     { /* ******Using 2 pointers****** */
         
-        struct node *prev_ptr = head;
         struct node *ptr = head;
+        struct node *prev_ptr = head;
         
         printf("Enter position to add the data: ");
         scanf("%d", &pos);
     /**************************************************************************************/    
     if (pos == 1) /*Similar to Insert at the Begin */
     {
-        temp->next = head;
-        head = temp;
-        printf("Node Added to position %d!\n\n", pos);
-        return ;
+        InsertAtBegin();
+        return;
     }
     
     else if (pos <= 0 )
@@ -180,14 +184,17 @@ void InsertAtPosition()
             return;
         }
             /************************************************************************************/
-
-        prev_ptr = ptr;
-        ptr = ptr->next;
-    }
+        prev_ptr=ptr;
+        ptr=ptr->next;
+            
+        }
+        
+        prev_ptr->next = temp;
+        temp->prev = prev_ptr;/*************/
+        temp->next = ptr;
+        ptr->prev = temp;/*************/
     
-    prev_ptr->next=NULL;
-    temp->next=ptr;
-    prev_ptr->next=temp;
+    
 
     printf("Node Added to position %d!\n\n", pos);
     }
@@ -204,9 +211,9 @@ void DeleteAtBegin()
     }
     else
     {
-        struct node *ptr = head;
-        head = head->next;
-        free(ptr);
+        struct node *temp = head;/*************/
+        head = temp->next;/*************/
+        free(temp);
         printf("Node Deleted!\n\n");
     }
 }
@@ -226,23 +233,19 @@ void DeleteAtEnd()
     /*Additonal*/
     else if (head->next == NULL)
     {
-        struct node *ptr = head;
+        struct node *temp = head;
         head = NULL;
-        free(ptr);
+        free(temp);
         printf("Node Deleted!\n\n");
     }
     /************************************************************************************/
     else
     {
-        struct node *prev_ptr = NULL;
-        struct node *ptr = head;
-        while (ptr->next != NULL)
-        {
-            prev_ptr = ptr;
-            ptr = ptr->next;
-        }
-        prev_ptr->next = NULL;
-        free(ptr);
+        struct node *temp = tail;
+        tail = temp->prev;/*************/
+        tail->next = NULL;/*************/
+        free(temp);
+        
         printf("Node Deleted!\n\n");
     }
 }
@@ -255,11 +258,12 @@ void DeleteAtPosition()
         printf("Linked List is empty! Nothing to delete!\n");
         return ;
     }
-    int pos;
+    int pos;/*************/
     printf("Enter position to delete the data: ");
     scanf("%d", &pos);
     
-
+    
+    /************************************************************************************/
     if (pos <= 0)
     {
         printf("Invalid position! Enter a valid position!\n\n");
@@ -268,13 +272,11 @@ void DeleteAtPosition()
     
     if (pos == 1)/*Similar to Delete Begin*/
     {
-        struct node *ptr = head;
-        head = head->next;
-        free(ptr);
-        printf("Node Deleted!\n\n");
+        DeleteAtBegin();
         return ;
 
     }
+    /************************************************************************************/
 
         struct node *prev_ptr = head;
         struct node *ptr = head;
@@ -282,29 +284,32 @@ void DeleteAtPosition()
         for (int i = 0; i < pos-1; i++)
         {
             /************************************************************************************/
-            if (ptr->next == NULL)
+            if (ptr->next == NULL || ptr == NULL)
             {
                 printf("Position is Out of Bound!\n\n");
                 return ;
-            }
+            }   
             /************************************************************************************/
-            prev_ptr = ptr;
-            ptr = ptr->next;
+        
+            prev_ptr=ptr;
+            ptr=ptr->next;
+        
         }
-
+        
         prev_ptr->next = ptr->next;
-        ptr->next = NULL;
+        ptr->next->prev = prev_ptr;/*########->########->#############*/
         free(ptr);
+        
         printf("Node Deleted!\n\n");
     }
 
 
     void Display()
-{
+{                                                   /*Similar code*/
     struct node *temp = head;
     while (temp != NULL)
     {
-        printf("%d -> ", temp->data);
+        printf("%d <-> ", temp->data);
         temp = temp->next;
     }
     printf(" \n\n");
@@ -312,13 +317,15 @@ void DeleteAtPosition()
 
 
 
-void DisplayReverse(struct node *ptr)
+void DisplayReverse()
 {
-    if (ptr->next != NULL)
+  struct node *temp = tail;/*************/
+    while (temp != NULL)
     {
-        DisplayReverse(ptr->next);
+        printf("%d -> ", temp->data);
+        temp = temp->prev;/*************/
     }
-    printf("%d ", ptr->data);
+    printf(" \n\n");  
 }
 
 
@@ -380,8 +387,8 @@ void Update()
     }
 
     int data;
-    printf("Enter new data: ");   
-    scanf("%d", &data);// &ptr->data
+    printf("Enter new data: ");
+    scanf("%d", &data);//&ptr->data
 
     ptr->data = data;
 
