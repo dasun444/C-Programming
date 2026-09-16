@@ -22,16 +22,15 @@ void selectionSort(int arr[],int n){
 int main (){
 
     int arr[]={7,4,5,9,8,2,1};
-    //int length =sizeof(arr)/sizeof(int);
-    int n =8;
+    int  n =sizeof(arr)/sizeof(int);
     printf("UnSorted array  \n");
-    for(int i =0;i<n-1;i++){
+    for(int i =0;i<n;i++){
         printf("%d ",arr[i]);
     }
     printf("\n");
     selectionSort(arr,n);
     printf("Sorted array - Selection sort\n");
-    for(int i =0;i<n-1;i++){
+    for(int i =0;i<n;i++){
         printf("%d ",arr[i]);
     }
 
